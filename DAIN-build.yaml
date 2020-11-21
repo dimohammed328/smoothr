@@ -1,4 +1,4 @@
- steps:
+steps:
 - name: 'gcr.io/kaniko-project/executor:latest'
   args: ["--dockerfile=DAIN.dockerfile",
          "--destination=gcr.io/$PROJECT_ID/dain-worker",
