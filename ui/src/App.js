@@ -24,7 +24,7 @@ class App extends React.Component {
     this.setState({file:e.target.files[0]})
   }
   fileUpload(file){
-    const url = 'http://localhost:5000/upload';
+    const url = 'https://us-central1-graphical-envoy-287420.cloudfunctions.net/upload';
     const formData = new FormData();
     formData.append('file',file)
     const config = {
