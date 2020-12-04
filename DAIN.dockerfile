@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN ["/bin/bash", "-c", "set -o pipefail && curl https://bootstrap.pypa.io/get-pip.py | python3"]
 
-RUN pip3 install --no-cache-dir torch==1.4.0 numpy opencv-python Pillow
+RUN pip3 install --no-cache-dir torch==1.4.0 numpy opencv-python Pillow google-cloud-pubsub google-cloud-storage
 
 WORKDIR /usr/src/app
 
@@ -24,3 +24,9 @@ WORKDIR /usr/src/app/VFIN/DAIN
 RUN python3 build.py -cc 61
 
 ADD http://vllab1.ucmerced.edu/~wenbobao/DAIN/best.pth ./model_weights/
+
+WORKDIR /usr/src/app/VFIN
+
+COPY worker/dain-worker.py .
+
+CMD python3 dain-worker.py
