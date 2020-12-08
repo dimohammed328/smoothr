@@ -80,6 +80,8 @@ spec:
             value: /home/kubernetes/bin/nvidia
           - name: NVIDIA_INSTALL_DIR_CONTAINER
             value: /usr/local/nvidia
+          - name: NVIDIA_DRIVER_VERSION
+            value: "450.80.02"
           - name: VULKAN_ICD_DIR_HOST
             value: /home/kubernetes/bin/nvidia/vulkan/icd.d
           - name: VULKAN_ICD_DIR_CONTAINER
