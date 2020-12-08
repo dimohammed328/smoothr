@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dain-worker
+spec:
+  selector:
+    matchLabels:
+      app: dain-worker
+  template:
+    metadata:
+      labels:
+        app: dain-worker
+    spec:
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: dain-worker-key
+      containers:
+      - name: dain-worker
+        image: gcr.io/graphical-envoy-287420/dain-worker:latest
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/key.json
