@@ -1,48 +1,57 @@
-import logo from './logo.svg';
 import React from 'react';
 
 import axios from 'axios';
-import './App.css';
+import './App.scss';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state ={
-      file:null
-    }
-    this.onFormSubmit = this.onFormSubmit.bind(this)
-    this.onChange = this.onChange.bind(this)
-    this.fileUpload = this.fileUpload.bind(this)
+    this.state = {
+      files: [],
+    };
+    this.onFormSubmit = this.onFormSubmit.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.fileUpload = this.fileUpload.bind(this);
   }
-  onFormSubmit(e){
-    e.preventDefault() // Stop form submit
-    this.fileUpload(this.state.file).then((response)=>{
+  onFormSubmit(e) {
+    e.preventDefault(); // Stop form submit
+    this.fileUpload(this.state.file).then(response => {
       console.log(response.data);
-    })
+    });
   }
   onChange(e) {
-    this.setState({file:e.target.files[0]})
+    Array.from(e.target.files).forEach(file => this.fileUpload(file))
   }
-  fileUpload(file){
-    const url = 'https://us-central1-graphical-envoy-287420.cloudfunctions.net/upload';
+  fileUpload(file) {
+    const url =
+      'https://us-central1-graphical-envoy-287420.cloudfunctions.net/upload';
     const formData = new FormData();
-    formData.append('file',file)
+    formData.append('file', file);
     const config = {
-        headers: {
-            'content-type': 'multipart/form-data'
-        }
-    }
-    return  axios.post(url, formData,config)
+      headers: {
+        'content-type': 'multipart/form-data'
+      },
+    };
+    axios.post(url, formData, config).then((res) => {
+      console.log(res)
+    }).catch(err => console.log(err))
   }
 
   render() {
     return (
-      <form onSubmit={this.onFormSubmit}>
-        <h1>File Upload</h1>
-        <input type="file" onChange={this.onChange} />
-        <button type="submit">Upload</button>
-      </form>
-   )
+      <div>
+        <div className='navbar'>
+          <h1>smoothr</h1>
+        </div>
+        <p>Upload MP4 to smooth the FPS!</p>
+        <form>
+          <label class='custom-file-upload'>
+            <input type='file' onChange={this.onChange}/>
+            Upload
+          </label>
+        </form>
+      </div>
+    );
   }
 }
 
