@@ -1,12 +1,10 @@
 import hashlib
 import os
 
-import redis
 from google.cloud import storage
 from werkzeug.utils import secure_filename
 
 ALLOWED_EXTENSIONS = {'mp4', 'gif'}
-REDIS_HOST = os.environ.get('REDISHOST', 'localhost')
 REDIS_PORT = int(os.environ.get('REDISPORT', 6379))
 GCP_STORAGE_BUCKET = os.environ.get('GCP_STORAGE_BUCKET')
 
@@ -48,8 +46,4 @@ def upload(request):
         blob = bucket.blob(f'{file_hash}.{extension}')
         file.seek(0)
         blob.upload_from_file(file)
-        redis_name_to_hash = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=1)
-        redis_hash_to_name = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=2)
-        redis_name_to_hash.set(filename, file_hash)
-        redis_hash_to_name.set(file_hash, filename)
         return "Uploaded File", 200, headers
