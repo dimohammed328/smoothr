@@ -1,4 +1,14 @@
 apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-trigger-auth-gcp-credentials
+spec:
+  secretTargetRef:
+  - parameter: GoogleApplicationCredentials
+    name: dain-worker-key
+    key: key.json
+---
+apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: gcp-pubsub-scaler
@@ -9,11 +19,12 @@ spec:
     name: dain-worker
   triggers:
   - type: gcp-pubsub
+    authenticationRef:
+      name: keda-trigger-auth-gcp-credentials
     metadata:
       subscriptionSize: "1"
       subscriptionName: "dain-worker"
-      credentialsFromEnv: GOOGLE_APPLICATION_CREDENTIALS
   pollingInterval: 15
   minReplicaCount: 0
   maxReplicaCount: 1
-  cooldownPeriod: 60
+  cooldownPeriod: 120
