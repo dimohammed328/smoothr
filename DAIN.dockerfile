@@ -21,7 +21,7 @@ RUN ["/bin/bash", "-c", "set -o pipefail && mkdir VFIN && curl -L https://github
 
 WORKDIR /usr/src/app/VFIN/DAIN
 
-RUN python3 build.py -cc 61
+RUN python3 build.py -cc 61,75
 
 ADD http://vllab1.ucmerced.edu/~wenbobao/DAIN/best.pth ./model_weights/
 
