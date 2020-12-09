@@ -44,5 +44,15 @@ body {
         display: none;
       }
     }
+    .file {
+      margin: 20px;
+      width: 50%;
+      border: 3px solid #ffd166;
+      border-radius: 10px;
+      background-color: #06D6A0;
+      .filename {
+        font-size: 36px;
+      }
+    }
   }
 }
