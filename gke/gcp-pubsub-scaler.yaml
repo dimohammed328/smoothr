@@ -1,0 +1,19 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: gcp-pubsub-scaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dain-worker
+  triggers:
+  - type: gcp-pubsub
+    metadata:
+      subscriptionSize: "1"
+      subscriptionName: "dain-worker"
+      credentialsFromEnv: GOOGLE_APPLICATION_CREDENTIALS
+  pollingInterval: 15
+  minReplicaCount: 0
+  maxReplicaCount: 1
+  cooldownPeriod: 60
