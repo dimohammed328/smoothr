@@ -1,26 +1,22 @@
-import hashlib
 import os
 
 from google.cloud import storage
 from werkzeug.utils import secure_filename
 
-ALLOWED_EXTENSIONS = {'mp4', 'gif'}
-REDIS_PORT = int(os.environ.get('REDISPORT', 6379))
+ALLOWED_EXTENSIONS = {'mp4'}
 GCP_STORAGE_BUCKET = os.environ.get('GCP_STORAGE_BUCKET')
-
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-def upload(request):
+def check(request):
     if request.method == 'OPTIONS':
         # Allows GET requests from any origin with the Content-Type
         # header and caches preflight response for an 3600s
         headers = {
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Methods': '*',
             'Access-Control-Allow-Headers': '*',
             'Access-Control-Max-Age': '3600'
         }
@@ -30,20 +26,16 @@ def upload(request):
         'Access-Control-Allow-Origin': '*'
     }
 
-    if 'file' not in request.files:
-        return "Missing File", 400, headers
-
-    file = request.files['file']
-    if file.filename == '':
-        return "Empty Filename", 400, headers
-
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
+    args = request.args
+    if 'file' not in args:
+        return 'Missing File', 400, headers
+    file = args['file']
+    if allowed_file(file):
+        filename = secure_filename(file)
         storage_client = storage.Client()
         bucket = storage_client.bucket(GCP_STORAGE_BUCKET)
-        file_hash = hashlib.md5(file.read()).hexdigest()
-        extension = filename.rsplit('.', 1)[1].lower()
-        blob = bucket.blob(f'{file_hash}.{extension}')
-        file.seek(0)
-        blob.upload_from_file(file)
-        return "Uploaded File", 200, headers
+        blob = bucket.get_blob(filename)
+        if not blob:
+            return "Not Found", 404, headers
+        else:
+            return blob.public_url, 200, headers
